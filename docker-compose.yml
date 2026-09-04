@@ -1,0 +1,45 @@
+services:
+  waha:
+    image: devlikeapro/waha:latest
+    container_name: whatsapp_waha
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - WHATSAPP_HOOK_URL=http://chatbot:8000/webhook
+      - WHATSAPP_HOOK_EVENTS=message,message.any
+      - WAHA_DASHBOARD_ENABLED=true
+      - WAHA_DASHBOARD_PORT=3000
+      - WAHA_DASHBOARD_NO_PASSWORD=true
+      - WAHA_NO_API_KEY=true
+      - WHATSAPP_SWAGGER_NO_PASSWORD=true
+      - WAHA_LOG_LEVEL=info
+    volumes:
+      - waha_sessions:/app/.sessions
+    networks:
+      - whatsapp_net
+
+  chatbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: whatsapp_chatbot
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - WAHA_API_URL=http://waha:3000
+    depends_on:
+      - waha
+    networks:
+      - whatsapp_net
+
+volumes:
+  waha_sessions:
+    driver: local
+
+networks:
+  whatsapp_net:
+    driver: bridge
