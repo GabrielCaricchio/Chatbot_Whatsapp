@@ -5,6 +5,9 @@ import os
 load_dotenv()
 
 ai_key = api_key=os.getenv("GROQ_API_KEY")
+ai_model = os.getenv("GROQ_MODEL")
+ai_temperature = os.getenv("GROQ_TEMPERATURE")
+ai_max_tokens = os.getenv("GROQ_MAX_TOKENS")
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -14,10 +17,10 @@ class Settings(BaseSettings):
     )
 
     # Groq configuration
-    GROQ_API_KEY: str = ai_key
-    GROQ_MODEL: str = "openai/gpt-oss-120b"
-    GROQ_TEMPERATURE: float = 0.7
-    GROQ_MAX_TOKENS: int = 1024
+    GROQ_API_KEY: str = str(ai_key)
+    GROQ_MODEL: str = str(ai_model)
+    GROQ_TEMPERATURE: float = float(ai_temperature)
+    GROQ_MAX_TOKENS: int = int(ai_max_tokens)
 
     # System prompt for chatbot
     SYSTEM_PROMPT: str = (
